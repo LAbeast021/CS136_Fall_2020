@@ -1,6 +1,10 @@
+//LAB 1 HESAMPOUR, KIARASH T TH
+
 #include <iostream>
-#include<string>
-#include<fstream>
+#include <string>
+#include <fstream>
+#include <math.h>
+
 using namespace std;
 
 //structure containing ID, name, quantity and price
