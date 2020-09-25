@@ -1,179 +1,157 @@
 //LAB 1 HESAMPOUR, KIARASH T TH
 
 #include <iostream>
+#include <stdio.h>
+#include <ctype.h>
 #include <string>
 #include <fstream>
 #include <math.h>
+#include <limits>
 
 using namespace std;
 
-//structure containing ID, name, quantity and price
-typedef struct{
-   string ID;
-   string name;
-   string quantity;
-   string price;
-}item;
+ struct Inventory_items{
+        string itemID;
+        string itemName;
+        int itemQuantity;
+        float itemPrice;
+    };
 
-//swap two structures, this helps in bubble sort function
-void swap(item *xp, item *yp)
-{
-   item temp = *xp;
-   *xp = *yp;
-   *yp = temp;
-}
+void printInventory (Inventory_items [],int);
+void searchInventoryByIDOrName (Inventory_items [],int);
+void sortInventory (Inventory_items [] ,int, int);
+void printReport (Inventory_items [],int);
 
-//Searching By ID and if found print details else print not found
-void searchByID(item inventory[100],int size){
-   string ID;
-   cout<<"Please give ID :";//taking ID from user
-   cin>>ID;
-   for(int i=0;i<size;i++){//looping through whole inventory
-       if(inventory[i].ID==ID)//checking if ID matches, if yes print results and return
-           cout<<inventory[i].ID<<"\t"<<inventory[i].name<<"\t"<<inventory[i].quantity<<"\t"<<inventory[i].price<<endl<<endl;
-       return;
-   }
-   cout<<"ID not found.\n";
-}
+int main (){
+    
+    int sizeOfInventory = 0, userChoice;
+    Inventory_items inventory [10];
 
-//sorting using bubble sort.
-void sort(item inventory[100],int size,int sortBy){
-   int i, j;
-   bool condition;
-   for (i = 0; i < size-1; i++) {
-       for (j = 0; j < size-i-1; j++){
-           //checking condition based in user selection
-           if(sortBy==0){
-               condition=inventory[j].ID > inventory[j+1].ID;
-           }
-           else if(sortBy==1){
-               condition=inventory[j].name > inventory[j+1].name;
-           }
-           else if(sortBy==2){
-               condition=inventory[j].quantity > inventory[j+1].quantity;
-           }
-           else if(sortBy==3){
-               condition=inventory[j].price > inventory[j+1].price;
-           }
-           if (condition){ //if condition is true swap
-               swap(&inventory[j], &inventory[j+1]);
-           }
-       }
-   }
-}
+    ifstream inFile ;
+    inFile.open("./dataFile.txt");
+        if(!inFile.is_open()){
+            cout << " An error occurd while opening the input file  . " << endl;
+            return 1;
+    };
+    while (!inFile.fail() && !inFile.eof()) {
+        Inventory_items tempItems;
+        inFile >> tempItems.itemID >> tempItems.itemName >> tempItems.itemQuantity >> tempItems.itemPrice ;
+        transform(tempItems.itemName.begin(), tempItems.itemName.end(), tempItems.itemName.begin(), ::toupper);
+        if (tempItems.itemPrice < 0) tempItems.itemPrice = 0;
+        if (tempItems.itemQuantity < 0) tempItems.itemQuantity = 0;
+        inventory[sizeOfInventory] = tempItems;
+        sizeOfInventory += 1;
+    }
+    inFile.close();
 
-//reading file
-void readFile(item inventory[100],int* size){
-   ifstream file("inventory.txt");
-   if (file.is_open()) {
-       string line;
-       //reading file line by line
-       while (getline(file, line)) {
-           size_t pos = 0;
-           string token;
-           item temp;
-           pos = line.find(" ");//finding position of space
-           token = line.substr(0, pos);//getting substring from start to space location
-           temp.ID=token;//first is ID
-           line.erase(0, pos + 1);//removing ID part from line
-           //repeating process for name,price and quantity
-           pos = line.find(" ");
-           token = line.substr(0, pos);
-           temp.name=token;
-           line.erase(0, pos + 1);
 
-           pos = line.find(" ");
-           token = line.substr(0, pos);
-           temp.quantity=token;
-           line.erase(0, pos + 1);
-           temp.price=line;
-           inventory[*size]=temp;
-           *size=*size+1;
-       }
-       file.close();
-   }else{
-       cout<<"Cannot open file.\n";
-       EXIT_SUCCESS;
-   }
-}
+   while(userChoice !=8 ){
+       cout 
+            << "Please choose one of the following options : " << endl
+            << "1) Print Inventory . " << endl
+            << "2) Search item By ID or Name  . " << endl
+            << "3) Sort items By ID . " << endl
+            << "4) Sort items By Name . " << endl
+            << "5) Sort items By Quantity . " << endl
+            << "6) Sort items By Price . " << endl
+            << "7) Print a Report of the inventory " << endl
+            << "8) Exit the program . " << endl
+            << "________________________________________________________________" << endl;
+        cin >> userChoice;
+        if(cin.fail()) {
+        cin.clear();
+        cin.ignore(numeric_limits<streamsize>::max(),'\n');
+        cout << "Input error, Please Try again." << endl;
 
-//printing inventory
-void printList(item inventory[100],int size){
-   cout<<"\n=============================================\n";
-   cout<<"=================Inventory===================\n";
-   cout<<"=============================================\n";
-   for(int i=0;i<size;i++){
-       cout<<inventory[i].ID<<"\t"<<inventory[i].name<<"\t"<<inventory[i].quantity<<"\t"<<inventory[i].price<<endl;
-   }
-   cout<<"=============================================\n\n";
-}
+        }
+        while( userChoice < 1 || userChoice > 8){
+            cout <<" Entered Option is not valid , Please try again :  "  << endl;
+            cin >> userChoice;
+        }
+        cin.clear();
+        cin.ignore();
+       switch (userChoice){
 
-int showMenu(){
-   //choice variable
-   int choice=8;
-   //showing Menu
-   cout<<"Please choose :\n";
-   cout<<"1) Print Inventory.\n";
-   cout<<"2) Search By ID.\n";
-   cout<<"3) Sort By ID.\n";
-   cout<<"4) Sort By Name.\n";
-   cout<<"5) Sort By Quantity.\n";
-   cout<<"6) Sort By Price.\n";
-   cout<<"7) Exit.\n";
-   //taking choice
-   cin>>choice;
-   //take choice again for invalid input
-   while(choice<1 || choice>7){
-       cout<<"Please choose valid input: ";
-       cin>>choice;
-   }
-   //clearing cin
-   cin.clear();
-   cin.ignore();
-   return choice;
-}
-void main(){
-   //array of structure item
-   item inventory[100];
-   int size=0;
-   int choice=1;
-   //reading file and storing in array
-   readFile(inventory,&size);
-   //continue untill user chooses to exit
-   while(choice!=7){
-       choice=showMenu();
-       switch (choice)
-       {
        case 1://for case 1 print inventory
-           printList(inventory,size);
+           printInventory(inventory,sizeOfInventory);
            break;
        case 2:
            //for input 2 search inventory by ID
-           searchByID(inventory,size);
+           searchInventoryByIDOrName(inventory,sizeOfInventory);
            break;
-       case 3:
-           //sort inventory by ID
-           sort(inventory,size,0);
-           break;
-       case 4:
-           // sort inventory by name
-           sort(inventory,size,1);
-           break;
-       case 5:
-           // sort inventory by quantity
-           sort(inventory,size,2);
-           break;
-       case 6:
-           // sort inventory by price
-           sort(inventory,size,3);
-           break;
-       case 7:
+        case 7:
+            printReport(inventory, sizeOfInventory);
+            break;
+       case 8:
+           cout << " Thank you ." << endl;
            break;
        default:
-           //printing message for invalid input
-           cout<<"Invalid Input. Please try again.\n";
-           break;
+       sortInventory (inventory, sizeOfInventory , userChoice);
+       break;
        }
    }
 }
+void printInventory (Inventory_items inventory[],int size){
+    cout <<" --------------- Inventory --------------" <<endl;
+    for(int i=0; i < size; i++){
+       cout << inventory[i].itemID<<"\t"<< inventory[i].itemName <<"\t"<< inventory[i].itemQuantity <<"\t"<< inventory[i].itemPrice <<endl;
+    }
+   cout <<"_________________________________________________________" << endl;
+};
 
+void searchInventoryByIDOrName (Inventory_items inventory[],int size) {
+   string enteredIDOrName;
+   cout <<"Please enter the ID or the Name of the item you are looking for : ";
+   cin >> enteredIDOrName;
+   transform(enteredIDOrName.begin(), enteredIDOrName.end(), enteredIDOrName.begin(), ::toupper);
+   for(int i = 0 ; i < size ; i++){
+       if(inventory[i].itemID == enteredIDOrName || inventory[i].itemName == enteredIDOrName){
+           cout << "----------------------------------------------------------------------" << endl;
+           cout << " Result found for " << enteredIDOrName << " : " << endl;
+           cout << inventory[i].itemID<<"\t"<<inventory[i].itemName<<"\t"<<inventory[i].itemQuantity<<"\t"<<inventory[i].itemPrice<<endl;
+           cout << "----------------------------------------------------------------------" << endl;
+       }
+       return;
+   }
+   cout <<" item with id or name '" << enteredIDOrName << " Couldn’t be found ." << endl;
+
+};
+void sortInventory (Inventory_items inventory[],int size, int userChoice){
+    Inventory_items tempInventory;
+    int iteration, index;
+    bool changePosition;
+    for (iteration = 1; iteration < size; iteration++){
+        for (index = 0; index < size - iteration; index++){
+            switch(userChoice) {
+                case 3 :
+                changePosition = inventory[index].itemID > inventory[index+1].itemID;
+                case 4 :
+                changePosition = inventory[index].itemName > inventory[index+1].itemName;
+                case 5 :
+                changePosition = inventory[index].itemQuantity > inventory[index+1].itemQuantity;
+                case 6 :
+                changePosition = inventory[index].itemPrice > inventory[index+1].itemPrice;
+            }
+            if (changePosition) {
+                tempInventory = inventory[index];
+                inventory[index] = inventory[index + 1];
+                inventory[index + 1] = tempInventory;
+            }
+        }    
+    }
+
+};
+void printReport (Inventory_items inventory [] , int size){
+    float totalWorth = 0;
+    int totalCount = 0;
+    for(int i=0; i < size; i++){
+        totalWorth += inventory[i].itemPrice;
+        totalCount += inventory[i].itemQuantity;
+    }
+    cout 
+    << "\t\t ----------------- Report ------------------" << endl
+    << " Number Of Unique Items in the Inventory : \t" << size << endl
+    << " Total Worth Of the Inventory  : \t" << totalWorth << endl
+    << " Total Count of the items in the inventory : \t" << totalCount << endl 
+    << " ------------------------------------------------" << endl;
+}
