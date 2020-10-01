@@ -1,67 +1,78 @@
 //LAB 2 HESAMPOUR, KIARASH T TH
+
 #include <iostream>
+#include <stdio.h>
+#include <ctype.h>
+#include <string>
+#include <fstream>
+#include <math.h>
+#include <limits>
 using namespace std;
-double power(double b, int e);
-int sumofsquares1(int n1, int n0);
-int sumofsquares2(int n2);
-int main()
-{
-double b, pow;
-int choose,e,n1,n2;
-cout<<"1.To find power\n2.To find sum of squares of numbers i.e.,(1+ 2^2 + 3^3 +....n^n)"<<endl;
-cout<<"3.To find sum of squares of numbers i.e.,(n^n + ... 3^3 + 2^2 +1)"<<endl;
-cout<<"choose 1 or 2 or 3: ";
-cin>>choose;  
-do{
-if(choose==1)
-{
-   cout<<"Enter base: ";
-   cin>>b;
-   cout<<"Enter exponent: ";
-   cin>>e;
-   pow = power(b, e);
-   cout<<b<<"^"<<e<<" = "<<pow<<endl;
-   }
-   else if(choose==2)
-   {
-       cout<<"Enter number of terms: ";
-       cin>>n1;
-       cout<<"sum of squares= "<<sumofsquares1(n1,1)<<endl;
-      
-   }
-   else if(choose==3)
-   {
-       cout<<"Enter number of terms: ";
-       cin>>n2;
-       cout<<"sum of squares= "<<sumofsquares2(n2)<<endl;
-   }
-   cout<<"1.To find power\n2.To find sum of squares of numbers i.e.,(1+ 2^2 + 3^3 +....n^n)"<<endl;
-cout<<"3.To find sum of squares of numbers i.e.,(n^n + ... 3^3 + 2^2 +1)"<<endl;
-   cout<<"Enter 1 or 2 or 3: ";
-   cin>>choose;
-   }while(choose==1 || choose==2 || choose==3);
-      
-}
-double power(double b, int e)//finding power for both +ve and -ve numbers
-{
-if(e==0)
-return 1;
-else if(e>0)
-return b*power(b,e-1);//for +ve exponent
-else
-return 1/power(b,-e);//for -ve exponent
-}
-int sumofsquares1(int n1, int n0)//this is for (1+ 2^2 + 3^3 +....n^n)
-{
-   if(n0<n1)
-       return n0*n0+sumofsquares1(n1,n0+1);
-   else if(n0==n1)
-       return n0*n0;
-}
-int sumofsquares2(int n2) //this is for (n^n + ... 3^3 + 2^2 +1)
-{
-   if(n2>1)
-       return n2*n2+sumofsquares2(n2-1);
-   else if(n2==1)
-       return 1;
-}
+
+double powerCalculator(int, int );
+int sumOfSquaresFrom1(int );
+int sumOfSquaresFromn(int );
+
+int main(){
+    double power_value;
+    int base_number, exponent_number, user_choice, number_of_terms;
+    char rep = 'Y';
+
+    while ( rep != 'N') {
+        cout 
+        << "Please Enter the number of one of the options : " << endl
+        << "1: Raise a number to a power . " << endl
+        << "2: produce  the sum of the squares  for the first n terms of the series [staring with 1] i.e.,(1+ 2^2 + 3^3 +....n^n) " << endl
+        << "3: add the first n terms of the series [starting with n] i.e.,(n^n + ... 3^3 + 2^2 +1)" << endl
+        << "4: Quit the Program " << endl;
+
+        cin >> user_choice;
+        if(cin.fail()) {
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(),'\n');
+            cout << "Input error, Please Try again." << endl;
+        }    
+
+        switch (user_choice){
+            case 1:
+                cout << "Please enter the base number : " << endl;
+                cin  >> base_number;
+                if(cin.fail()) {
+                    cin.clear();
+                    cin.ignore(numeric_limits<streamsize>::max(),'\n');
+                    cout << "Input error, Please Try again." << endl;
+                }
+                cout << "Please enter the exponent number : " << endl;
+                cin  >> exponent_number;
+                if(cin.fail()) {
+                    cin.clear();
+                    cin.ignore(numeric_limits<streamsize>::max(),'\n');
+                    cout << "Input error, Please Try again." << endl;
+                }
+                
+                power_value = powerCalculator ( base_number, exponent_number);
+                cout << base_number << " to the power of " << exponent_number << " = " << power_value << endl; 
+                break;
+        
+            default:
+                break;
+        }
+
+        }
+    }
+
+double powerCalculator(int base_number, int exponent_number) {
+    if ( exponent_number == 0) {
+        return 1;
+    }
+    else if ( base_number == 0) {
+        return 0;
+    }
+    else if (exponent_number > 0) {
+        return base_number * powerCalculator(base_number ,exponent_number - 1);
+    }
+    else {
+        return 1 / powerCalculator(base_number , -exponent_number);
+    }
+    
+}   
